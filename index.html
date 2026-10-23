@@ -20,7 +20,8 @@ main{flex:1;min-width:0;padding:20px 24px 60px;max-width:1100px}
 .btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:8px 13px;cursor:pointer;font-weight:600}
 .btn.g{background:var(--sf);color:var(--tx);border:1px solid var(--ln)}
 .btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
-.btn.s{padding:4px 9px;font-size:13px}.btn.r{background:var(--er)}
+.btn.s{padding:4px 9px;font-size:13px}
+.po{border:1px solid var(--ln);background:var(--sf);color:var(--tx);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;font-family:inherit;line-height:1.3}.po:hover{border-color:var(--mu)}.po.on{background:var(--ac);color:var(--on);border-color:var(--ac)}.po.cu{border-style:dashed}.pos{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.ppv{display:none;margin-top:8px;padding:10px 12px;border-radius:8px;background:var(--acs);font-size:13px;color:var(--mu);white-space:pre-wrap;line-height:1.5}.ppv::before{content:'Aparece na proposta';display:block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:4px;opacity:.8}.btn.r{background:var(--er)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:16px}
 .card{background:var(--sf);border:1px solid var(--ln);border-radius:10px;padding:14px}
 .kpi b{display:block;font-size:24px}.kpi span{color:var(--mu);font-size:13px}
@@ -274,7 +275,8 @@ async function loadPay(){try{const{data,error}=await sb.from('pagamento_info').s
 async function savePay(p,quiet){try{const{error}=await sb.from('pagamento_info').upsert({id:1,data:{nome:p.nome||'',banco:p.banco||'',pix:p.pix||'',obs:p.obs||''},updated_at:new Date().toISOString()});if(error)throw error}catch(e){if(!quiet)toast('Não foi possível compartilhar os dados de pagamento com os clientes')}}
 const $=s=>document.querySelector(s);
 const nid=()=>++S.n;
-const cl=id=>S.clients.find(c=>c.id==id)||{nome:'—'};
+const INT_ID=0,INT_NOME='Vistografia (interno)';
+const cl=id=>S.clients.find(c=>c.id==id)||((id!=null&&id!==''&&+id===INT_ID)?{id:INT_ID,nome:INT_NOME}:{nome:'—'});
 const pj=id=>(S.projects.find(p=>p.id==id)||{nome:'—'}).nome;
 const money=v=>'R$ '+Number(v).toLocaleString('pt-BR');
 const fd=s=>s.split('-').reverse().join('/');
@@ -606,10 +608,12 @@ function kebabize(root){if(!root||S.role!=='admin')return;const G=new Map();
  G.forEach((bs,c)=>{const first=[...c.querySelectorAll('button.btn,a.btn')].find(x=>!x.closest('.km')),host=first.parentNode,w=document.createElement('span');w.className='km';w.setAttribute('onclick',"event.stopPropagation()");w.innerHTML='<button type="button" class="kb" aria-label="Ações" aria-haspopup="menu" aria-expanded="false" title="Ações" onclick="kmT(this)">⋮</button><div class="kmenu" role="menu"></div>';const m=w.lastChild;host.insertBefore(w,first);bs.forEach(b=>{if(b.tagName==='BUTTON'){const x=b.textContent.trim();if((b.getAttribute('onclick')||'').startsWith('cmts(')){const n=+x.replace(/\D/g,'');b.innerHTML=ico('cmt')+' Comentários'+(n?' ('+n+')':'')}else if(x==='★')b.textContent='★ Remover dos favoritos';else if(x==='☆')b.textContent='☆ Favoritar'}b.setAttribute('role','menuitem');m.appendChild(b)});})}
 function dlg(html,ok,label){const d=$('#dlg');d.style.width='';d.innerHTML=html+`<div style="display:flex;gap:8px;justify-content:flex-end;margin-top:14px"><button class="btn g" onclick="$('#dlg').close()">Cancelar</button><button class="btn" id="ok">${label||'Salvar'}</button></div>`;$('#ok').onclick=()=>{if(ok()){save();d.close();render()}};kebabize(d);d.showModal()}
 const opts=a=>a.map(x=>`<option value="${x.id??x}">${esc(x.nome??x)}</option>`).join('');
+/* Cliente + opção interna (Vistografia). O primeiro cliente continua como padrão. */
+const copts=sel=>`<option value="${INT_ID}">${INT_NOME}</option>`+S.clients.map((x,i)=>`<option value="${x.id}" ${(sel!=null?x.id==sel:i===0)?'selected':''}>${esc(x.nome)}</option>`).join('');
 function clTipo(){const t=$('#f0').value;$('#clv').textContent=t==='Mensal'?'Mensalidade (R$)':t==='Anual'?'Valor anual (R$)':'Valor do serviço (R$)'}
 function newClient(){dlg(`<h3>Novo cliente</h3><label>Tipo de cobrança</label><select id="f0" onchange="clTipo()"><option value="Mensal">Mensal (cobrança todo mês)</option><option value="Anual">Anual</option><option value="Pontual">Pontual (serviço único, sem recorrência)</option></select><label>Nome</label><input id="f1"><label>Empresa</label><input id="f2"><label id="clv">Mensalidade (R$)</label><input id="f3" type="number"><label>Responsável</label><input id="f4">`,()=>{const n=$('#f1').value.trim();if(!n)return toast('Informe o nome');const id=nid(),t=$('#f0').value,v=+$('#f3').value||0;S.clients.push({id,nome:n,emp:$('#f2').value,status:'Onboarding',cobr:t,valor:v,mensal:t==='Mensal'?v:t==='Anual'?Math.round(v/12*100)/100:0,resp:$('#f4').value.trim(),renov:t==='Pontual'?'':addD(365),onb:ONB.map(()=>0)});logIt('criou cliente',n);toast('Cliente criado em onboarding');return 1})}
-function newTask(){dlg(`<h3>Nova tarefa</h3><label>Título</label><input id="f1"><label>Cliente</label><select id="f2">${opts(S.clients)}</select><label>Responsável</label><input id="f3"><label>Prazo</label><input id="f4" type="date" value="${addD(3)}">`,()=>{const t=$('#f1').value.trim();if(!t)return toast('Informe o título');const c=+$('#f2').value;S.tasks.push({id:nid(),t,cid:c,pid:(S.projects.find(p=>p.cid==c)||{}).id,resp:$('#f3').value,prazo:$('#f4').value,st:'A fazer'});logIt('criou tarefa',t);toast('Tarefa criada');return 1})}
-function newContent(dd){dlg(`<h3>Novo conteúdo</h3><label>Tema</label><input id="f1"><label>Cliente</label><select id="f2">${opts(S.clients)}</select><label>Tipo</label><select id="f3">${opts(['Feed','Carrossel','Reel','Story','Post'])}</select><label>Data</label><input id="f4" type="date" value="${typeof dd==='string'&&dd?dd:addD(5)}"><label>Legenda</label><textarea id="f5" rows="3"></textarea>${attHtml}`,()=>{const t=$('#f1').value.trim();if(!t)return toast('Informe o tema');return attTake(a=>{const o={id:nid(),t,cid:+$('#f2').value,tipo:$('#f3').value,data:$('#f4').value,st:'A fazer',leg:$('#f5').value};if(a)o.anexo=a;S.contents.push(o);logIt('criou conteúdo',t);toast('Conteúdo criado')})})}
+function newTask(){dlg(`<h3>Nova tarefa</h3><label>Título</label><input id="f1"><label>Cliente</label><select id="f2">${copts()}</select><label>Responsável</label><input id="f3"><label>Prazo</label><input id="f4" type="date" value="${addD(3)}">`,()=>{const t=$('#f1').value.trim();if(!t)return toast('Informe o título');const c=+$('#f2').value;S.tasks.push({id:nid(),t,cid:c,pid:(S.projects.find(p=>p.cid==c)||{}).id,resp:$('#f3').value,prazo:$('#f4').value,st:'A fazer'});logIt('criou tarefa',t);toast('Tarefa criada');return 1})}
+function newContent(dd){dlg(`<h3>Novo conteúdo</h3><label>Tema</label><input id="f1"><label>Cliente</label><select id="f2">${copts()}</select><label>Tipo</label><select id="f3">${opts(['Feed','Carrossel','Reel','Story','Post'])}</select><label>Data</label><input id="f4" type="date" value="${typeof dd==='string'&&dd?dd:addD(5)}"><label>Legenda</label><textarea id="f5" rows="3"></textarea>${attHtml}`,()=>{const t=$('#f1').value.trim();if(!t)return toast('Informe o tema');return attTake(a=>{const o={id:nid(),t,cid:+$('#f2').value,tipo:$('#f3').value,data:$('#f4').value,st:'A fazer',leg:$('#f5').value};if(a)o.anexo=a;S.contents.push(o);logIt('criou conteúdo',t);toast('Conteúdo criado')})})}
 const SEL={leads:[],tasks:[],projects:[],contents:[]},SELM={};
 const SELC={leads:{n:['lead','leads'],nm:x=>x.nome,v:['criou lead','moveu lead para','marcou lead como perdido','converteu lead em cliente']},tasks:{n:['tarefa','tarefas'],nm:x=>x.t,cm:'t'},projects:{n:['projeto','projetos'],nm:x=>x.nome,cm:'p'},contents:{n:['conteúdo','conteúdos'],nm:x=>x.t,cm:'c'}};
 const sKey=(c,k)=>c+':'+k,sOn=(c,k)=>!!SELM[sKey(c,k)];
@@ -679,6 +683,85 @@ const pRec=r=>r==='Mensal'?'mensal':r==='Anual'?'anual':'único',pSuf=p=>p.rec==
 const propNum=()=>{const y=new Date().getFullYear(),n=S.props.filter(p=>String(p.num||'').startsWith(y+'-')).length+1;return y+'-'+String(n).padStart(3,'0')};
 function pRow(i){i=i||{};return `<div class="pir" style="border:1px solid var(--ln);border-radius:8px;padding:10px;margin-top:8px"><input class="pd" placeholder="Serviço ou entrega (ex.: Gestão de Instagram)" value="${esc(i.d||'')}"><textarea class="pt" rows="2" placeholder="Detalhes: o que está incluso (opcional)" style="margin-top:6px">${esc(i.det||'')}</textarea><div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:6px"><div><label style="margin-top:0">Quantidade</label><input class="pq" type="number" min="0" step="any" value="${i.q??1}" oninput="pTot()"></div><div><label style="margin-top:0">Valor unitário (R$)</label><input class="pv" type="number" min="0" step="any" value="${i.v??''}" oninput="pTot()"></div><button type="button" class="btn s g" onclick="this.closest('.pir').remove();pTot()">Remover</button></div></div>`}
 function pTot(){const el=$('#ptot');if(!el)return;const sub=[...document.querySelectorAll('#pi .pir')].reduce((a,r)=>a+(+r.querySelector('.pq').value||0)*(+r.querySelector('.pv').value||0),0),d=+$('#p_desc').value||0,tot=sub*(1-d/100);el.innerHTML=`Subtotal ${money(sub)}${d?' · Desconto '+d+'%: -'+money(sub-tot):''}<br><b>Total ${money(tot)}</b>`}
+const PO={
+intro:{t:'Situação atual do cliente',mode:'p',ph:'Algo mais sobre a situação do cliente...',o:[
+['Está começando','{c} está começando sua presença digital e precisa de uma base sólida para ser encontrada pelo público certo.'],
+['Posta sem estratégia','{c} já está nas redes sociais, mas publica sem uma estratégia definida e com pouca regularidade.'],
+['Visual pouco profissional','O perfil de {c} ainda não reflete a qualidade do seu trabalho e precisa de uma identidade visual mais profissional.'],
+['Alcance sem conversão','{c} tem audiência, mas esse alcance ainda não se transforma em contatos e vendas.'],
+['Sem tempo para as redes','{c} não tem tempo de cuidar das redes sociais e precisa delegar essa rotina a uma equipe especializada.'],
+['Lançamento','{c} vai lançar um novo produto ou serviço e precisa de comunicação para apoiar esse momento.'],
+['Concorrência forte','{c} atua em um mercado competitivo e precisa se destacar e fortalecer o posicionamento da marca.']]},
+obj:{t:'Objetivos do cliente',mode:'l',lead:'Esta proposta tem como objetivo apoiar {c} a:',ph:'Escreva um objetivo por linha...',o:[
+['Mais presença','Aumentar a presença e o reconhecimento da marca nas redes sociais.'],
+['Gerar leads','Gerar mais contatos qualificados e oportunidades de venda.'],
+['Autoridade','Fortalecer a autoridade e a credibilidade de {c} no mercado.'],
+['Engajamento','Aumentar o engajamento e o relacionamento com a audiência.'],
+['Identidade visual','Profissionalizar a identidade visual e a comunicação da marca.'],
+['Consistência','Manter regularidade e consistência nas publicações.'],
+['Fidelizar','Fidelizar clientes atuais e estimular indicações.'],
+['Divulgar lançamento','Divulgar o lançamento de um novo produto ou serviço.']]},
+escopo:{t:'O que será entregue',mode:'l',lead:'Estão incluídos nesta proposta:',ph:'Uma entrega por linha...',o:[
+['Gestão de Instagram','Gestão completa do perfil no Instagram, incluindo planejamento, publicação e acompanhamento do desempenho.'],
+['Calendário editorial','Planejamento mensal de conteúdo, com calendário editorial alinhado aos objetivos e à identidade da marca.'],
+['Posts e carrosséis','Criação de artes estáticas e carrosséis para o feed, com legenda e hashtags.'],
+['Reels','Roteirização, edição e publicação de Reels, com foco em alcance e engajamento.'],
+['Stories','Criação e publicação de Stories para manter o relacionamento diário com a audiência.'],
+['Padrão visual do perfil','Padronização visual do perfil (capa, destaques e templates), seguindo a identidade da marca.'],
+['Tráfego pago','Criação, configuração e otimização de campanhas de anúncios pagos, com acompanhamento dos resultados.'],
+['Interações','Monitoramento e resposta a comentários e mensagens diretas em horário comercial.'],
+['Captação de foto/vídeo','Captação presencial de fotos e vídeos, com data e roteiro combinados previamente.'],
+['Landing page','Criação de página de captação (landing page) otimizada para conversão.'],
+['Aprovação antes de publicar','Envio de todos os conteúdos para aprovação do cliente antes da publicação.'],
+['Relatório mensal','Relatório mensal com as principais métricas, aprendizados e próximos passos.'],
+['Reunião mensal','Reunião mensal de alinhamento para apresentar resultados e definir as prioridades do período.']]},
+excl:{t:'O que não está incluso',mode:'l',lead:'Não estão incluídos nesta proposta:',ph:'Um item por linha...',o:[
+['Verba de anúncios','Investimento em anúncios (verba de mídia paga), que é pago diretamente pelo cliente à plataforma.'],
+['Foto/vídeo presencial','Produção presencial de fotos e vídeos, salvo se descrita no escopo.'],
+['Criação de logo','Criação de logotipo ou reformulação completa da identidade visual.'],
+['Material impresso','Materiais impressos e peças para mídia off-line.'],
+['Atendimento e vendas','Atendimento comercial e fechamento de vendas com os contatos gerados.'],
+['Ferramentas de terceiros','Custos com bancos de imagem, músicas, fontes ou ferramentas pagas de terceiros.'],
+['Itens fora do escopo','Serviços e entregas não listados no escopo, que poderão ser orçados à parte.']]},
+cresp:{t:'Responsabilidades do cliente',mode:'l',lead:'Para o bom andamento do trabalho, {c} se compromete a:',ph:'Uma responsabilidade por linha...',o:[
+['Enviar materiais','Enviar logotipo, fotos, textos e demais materiais necessários em até 3 dias úteis após a aprovação.'],
+['Fornecer acessos','Fornecer os acessos às redes sociais e ferramentas necessárias.'],
+['Aprovar em 2 dias','Aprovar ou solicitar ajustes nos conteúdos em até 2 dias úteis, para manter o cronograma.'],
+['Avisar novidades','Informar com antecedência promoções, datas e novidades do negócio.'],
+['Participar das reuniões','Participar das reuniões de alinhamento agendadas.'],
+['Autorizar imagem','Fornecer autorização de uso de imagem das pessoas que aparecerem nos conteúdos.'],
+['Pagar em dia','Cumprir os prazos e valores de pagamento acordados.']]},
+cond:{t:'Condições gerais',mode:'l',lead:'',ph:'Uma condição por linha...',o:[
+['Contrato de 12 meses','Contrato com duração mínima de 12 meses, renovável mediante acordo entre as partes.'],
+['Reajuste anual','Os valores serão reajustados anualmente pela variação do IPCA ou índice equivalente.'],
+['Cancelamento com 30 dias','O cancelamento deve ser comunicado por escrito, com aviso prévio de 30 dias.'],
+['2 rodadas de ajustes','Cada conteúdo inclui até 2 rodadas de ajustes; alterações adicionais poderão ser cobradas à parte.'],
+['Sem garantia de resultado','Os resultados dependem de fatores externos (algoritmos das plataformas, mercado, verba), por isso não há garantia de números específicos.'],
+['Uso em portfólio','{a} poderá usar os trabalhos realizados em seu portfólio, salvo solicitação contrária do cliente.'],
+['Confidencialidade','As informações trocadas entre as partes serão tratadas com confidencialidade.'],
+['Validade da proposta','Esta proposta é válida até a data indicada, e os valores podem ser revistos após esse prazo.']]},
+pag:{t:'Condições de pagamento',mode:'l',lead:'',ph:'Uma condição por linha...',o:[
+['Mensal, dia 10','Pagamento mensal, com vencimento todo dia 10.'],
+['50% + 50%','50% na aprovação da proposta e 50% na entrega.'],
+['À vista','Pagamento à vista, por Pix ou transferência.'],
+['Cartão','Parcelamento no cartão de crédito, conforme combinado.'],
+['Antes de começar','Primeira cobrança na assinatura do contrato, antes do início dos trabalhos.'],
+['Multa por atraso','Atraso no pagamento sujeito a multa de 2% e juros de 1% ao mês.']]}
+};
+const pCli=()=>{const g=i=>{const x=document.getElementById(i);return x?x.value.trim():''};return g('p_emp')||g('p_nome')||'o cliente'};
+const pKeys=Object.keys(PO);
+function pCmp(k){const c=PO[k],cli=pCli(),ag=(S.cfg&&S.cfg.ag&&S.cfg.ag.nome)||'A agência',f=t=>t.replace(/\{c\}/g,cli).replace(/\{a\}/g,ag),up=t=>t.charAt(0).toUpperCase()+t.slice(1),
+ tt=[...document.querySelectorAll('#pk_'+k+' .po.on:not(.cu)')].map(b=>up(f(c.o[b.dataset.i][1]))),ct=document.getElementById('pc_'+k),cu=ct&&ct.style.display!=='none'?ct.value.trim():'';
+ if(c.mode==='p')return [tt.join(' '),cu].filter(Boolean).join('\n\n');
+ const li=[...tt,...cu.split('\n').map(x=>x.trim().replace(/^[•\-–*]\s*/,'')).filter(Boolean).map(up)];
+ return li.length?(c.lead?f(c.lead)+'\n':'')+li.map(x=>'• '+x).join('\n'):''}
+function pUpd(k){const el=document.getElementById('pv_'+k);if(!el)return;const t=pCmp(k);el.textContent=t;el.style.display=t?'block':'none'}
+const pAll=()=>pKeys.forEach(pUpd);
+function pTg(b,k){b.classList.toggle('on');if(b.classList.contains('cu')){const t=document.getElementById('pc_'+k),on=b.classList.contains('on');t.style.display=on?'block':'none';if(on)t.focus()}pUpd(k)}
+const pSel=()=>Object.fromEntries(pKeys.map(k=>[k,[...document.querySelectorAll('#pk_'+k+' .po.on:not(.cu)')].map(b=>PO[k].o[b.dataset.i][0])])),
+ pCus=()=>Object.fromEntries(pKeys.map(k=>{const t=document.getElementById('pc_'+k);return [k,t&&t.style.display!=='none'?t.value.trim():'']}));
+function pPick(k,e){const c=PO[k],sl=(e&&e.sel&&e.sel[k])||[],cu=(e&&e.cus&&e.cus[k])||(e&&!e.sel&&e[k]?e[k]:'');
+ return `<label>${c.t}</label><div id="pk_${k}" class="pos">${c.o.map((o,i)=>`<button type="button" class="po${sl.includes(o[0])?' on':''}" data-i="${i}" onclick="pTg(this,'${k}')">${esc(o[0])}</button>`).join('')}<button type="button" class="po cu${cu?' on':''}" onclick="pTg(this,'${k}')">✎ Personalizar</button></div><textarea id="pc_${k}" rows="2" placeholder="${c.ph}" style="margin-top:8px;display:${cu?'block':'none'}" oninput="pUpd('${k}')">${esc(cu)}</textarea><div id="pv_${k}" class="ppv"></div>`}
 function newProp(id){const e=id?P_(id):null,v=(k,d)=>esc(e&&e[k]!=null?e[k]:(d||'')),it=e&&e.itens&&e.itens.length?e.itens:[{q:1}],
  sec=t=>`<div class="eyebrow" style="margin:22px 0 2px">${t}</div>`,
  g=h=>`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 12px">${h}</div>`,
@@ -687,17 +770,17 @@ function newProp(id){const e=id?P_(id):null,v=(k,d)=>esc(e&&e[k]!=null?e[k]:(d||
  dlg(`<h3>${e?'Editar proposta':'Nova proposta'}</h3><div style="max-height:68vh;overflow:auto;padding-right:6px">
 ${sec('Dados da proposta')}${g(fi('p_num','Nº da proposta','num',propNum())+fi('p_emit','Data de emissão','emit',D(),'date')+fi('p_val','Válida até','val',addD(15),'date'))}${fi('p_titulo','Título da proposta','titulo','','text','Ex.: Gestão de redes sociais e produção de conteúdo')}
 ${sec('Cliente')}${g(fi('p_nome','Nome do contato','nome')+fi('p_emp','Empresa','emp')+fi('p_doc','CNPJ / CPF','doc')+fi('p_email','E-mail','email','','email')+fi('p_tel','Telefone / WhatsApp','tel'))}
-${sec('Apresentação')}${ta('p_intro','Contexto: o que entendemos da necessidade do cliente','intro','',3)}${ta('p_obj','Objetivo da proposta','obj','',2)}${ta('p_escopo','Escopo: o que será feito','escopo','',4)}
+${sec('Apresentação')}<div class="sub" style="margin-bottom:2px">Marque as opções que se aplicam: os textos completos são montados automaticamente. Use “Personalizar” para escrever do seu jeito.</div>${pPick('intro',e)}${pPick('obj',e)}${pPick('escopo',e)}
 ${sec('Serviços e valores')}<div id="pi">${it.map(pRow).join('')}</div><button type="button" class="btn s g" style="margin-top:8px" onclick="$('#pi').insertAdjacentHTML('beforeend',pRow({q:1}))">+ Adicionar item</button>
 ${g(`<div><label>Desconto (%)</label><input id="p_desc" type="number" min="0" max="100" step="any" value="${e?e.desc||0:0}" oninput="pTot()"></div><div><label>Tipo de cobrança</label><select id="p_rec">${[['Mensal','Mensal (cobrança todo mês)'],['Anual','Anual'],['Único','Pontual / valor único']].map(([k,l])=>`<option value="${k}" ${(e?e.rec:'Mensal')===k?'selected':''}>${l}</option>`).join('')}</select></div>`)}<div id="ptot" class="sub" style="margin-top:8px"></div>
 ${sec('Prazos')}${g(fi('p_inicio','Início previsto','inicio','','date')+fi('p_prazo','Prazo de entrega ou duração','prazo','','text','Ex.: 30 dias corridos'))}
-${sec('Pagamento')}${fi('p_forma','Formas de pagamento','forma','Pix, boleto ou cartão')}${ta('p_pag','Condições de pagamento','pag','',2,'Ex.: 50% na aprovação e 50% na entrega. Vencimento todo dia 10.')}
-${sec('Condições')}${ta('p_excl','O que não está incluso','excl','',2)}${ta('p_cresp','Responsabilidades do cliente','cresp','',2,'Ex.: enviar logos, fotos e acessos em até 3 dias úteis.')}${ta('p_cond','Condições gerais e observações','cond','',3)}${ta('p_prox','Próximos passos','prox','1. Aprovação desta proposta.\n2. Assinatura do contrato.\n3. Reunião de onboarding.\n4. Início dos trabalhos.',4)}${fi('p_por','Responsável pela proposta (Vistografia)','por',who())}
+${sec('Pagamento')}${fi('p_forma','Formas de pagamento','forma','Pix, boleto ou cartão')}${pPick('pag',e)}
+${sec('Condições')}${pPick('excl',e)}${pPick('cresp',e)}${pPick('cond',e)}${ta('p_prox','Próximos passos','prox','1. Aprovação desta proposta.\n2. Assinatura do contrato.\n3. Reunião de onboarding.\n4. Início dos trabalhos.',4)}${fi('p_por','Responsável pela proposta (Vistografia)','por',who())}
 ${attHtml}</div>`,()=>{const gv=i=>$('#'+i).value,nome=gv('p_nome').trim(),itens=[...document.querySelectorAll('#pi .pir')].map(r=>({d:r.querySelector('.pd').value.trim(),det:r.querySelector('.pt').value.trim(),q:+r.querySelector('.pq').value,v:+r.querySelector('.pv').value||0})).filter(i=>i.d&&i.q>0);
  if(!nome)return toast('Informe o nome do cliente');if(!itens.length)return toast('Adicione ao menos um serviço com quantidade');if(!gv('p_val'))return toast('Informe até quando a proposta é válida');
- const o={num:gv('p_num').trim(),emit:gv('p_emit'),val:gv('p_val'),titulo:gv('p_titulo').trim(),nome,emp:gv('p_emp').trim()||nome,doc:gv('p_doc').trim(),email:gv('p_email').trim(),tel:gv('p_tel').trim(),intro:gv('p_intro'),obj:gv('p_obj'),escopo:gv('p_escopo'),itens,desc:Math.min(100,Math.max(0,+gv('p_desc')||0)),rec:gv('p_rec'),inicio:gv('p_inicio'),prazo:gv('p_prazo').trim(),forma:gv('p_forma').trim(),pag:gv('p_pag'),excl:gv('p_excl'),cresp:gv('p_cresp'),cond:gv('p_cond'),prox:gv('p_prox'),por:gv('p_por').trim()};
+ const o={num:gv('p_num').trim(),emit:gv('p_emit'),val:gv('p_val'),titulo:gv('p_titulo').trim(),nome,emp:gv('p_emp').trim()||nome,doc:gv('p_doc').trim(),email:gv('p_email').trim(),tel:gv('p_tel').trim(),intro:pCmp('intro'),obj:pCmp('obj'),escopo:pCmp('escopo'),itens,desc:Math.min(100,Math.max(0,+gv('p_desc')||0)),rec:gv('p_rec'),inicio:gv('p_inicio'),prazo:gv('p_prazo').trim(),forma:gv('p_forma').trim(),pag:pCmp('pag'),excl:pCmp('excl'),cresp:pCmp('cresp'),cond:pCmp('cond'),prox:gv('p_prox'),por:gv('p_por').trim(),sel:pSel(),cus:pCus()};
  const mk=a=>{let pid;if(e){Object.assign(e,o);if(a)e.anexo=a;pid=e.id;logIt('editou proposta',nome)}else{pid=nid();S.props.push({...o,id:pid,st:'Rascunho',anexo:a});logIt('criou proposta',nome)}toast('Proposta salva');printProp(pid)};return attTake(mk)},'Salvar e gerar PDF');
- $('#dlg').style.width='min(780px,94vw)';pTot()}
+ $('#dlg').style.width='min(780px,94vw)';pTot();pAll();['p_nome','p_emp'].forEach(i=>$('#'+i).addEventListener('input',pAll))}
 const BF=[['Sobre a empresa',[['historia','História'],['produtos','Produtos e serviços'],['dif','Diferenciais']]],['Público e objetivos',[['publico','Público-alvo'],['personas','Personas'],['obj','Objetivos'],['conc','Concorrentes'],['ref','Referências']]],['Comunicação',[['tom','Tom de voz'],['estilo','Estilo visual'],['cores','Cores'],['tipo','Tipografia']]],['Conteúdo',[['prior','Assuntos prioritários'],['proib','Assuntos proibidos'],['pperm','Palavras permitidas'],['pproib','Palavras proibidas'],['cta','CTA preferido'],['freq','Frequência de publicação'],['plat','Plataformas utilizadas']]]];
 function briefTab(c){c.brief=c.brief||{};const all=BF.flatMap(s=>s[1]),n=all.filter(f=>(c.brief[f[0]]||'').trim()).length;return `<div class="card"><div class="bar"><i style="width:${Math.round(n/all.length*100)}%"></i></div><p class="sub">${n} de ${all.length} perguntas respondidas</p></div>`+BF.map(s=>`<div class="card" style="margin-top:12px"><h3>${s[0]}</h3>${s[1].map(f=>`<label>${f[1]}</label><textarea id="b_${f[0]}" rows="2">${esc(c.brief[f[0]]||'')}</textarea>`).join('')}</div>`).join('')+`<button class="btn" style="margin-top:12px" onclick="saveBrief(${c.id})">Salvar briefing</button>`}
 function saveBrief(id){const c=S.clients.find(x=>x.id==id);c.brief=c.brief||{};BF.flatMap(s=>s[1]).forEach(f=>c.brief[f[0]]=$('#b_'+f[0]).value);if(Object.values(c.brief).filter(v=>v.trim()).length>=10)c.onb[2]=1;logIt('atualizou briefing',c.nome);toast('Briefing salvo');render()}
@@ -882,7 +965,7 @@ leads:[['nome','Nome'],['emp','Empresa'],['serv','Serviço'],['valor','Valor men
 const ebtnE=(c,id)=>S.role==='admin'?`<button class="btn s g" onclick="event.stopPropagation();editR('${c}',${id})">Editar</button>`:'';
 const ebtn=(c,id)=>S.role==='admin'?`<button class="btn s g" onclick="event.stopPropagation();editR('${c}',${id})">Editar</button><button class="btn s r" onclick="event.stopPropagation();delR('${c}',${id})">Excluir</button>`:'';
 function editR(c,id,nw){const o=nw||S[c].find(x=>x.id==id),F=EF[c];
-const fh=([p,l,t,op])=>{const v=o[p]??'',i='ef_'+p;return `<label>${l}</label>`+(t==='a'?`<textarea id="${i}" rows="3">${esc(v)}</textarea>`:t==='s'?`<select id="${i}">${op.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`:t==='c'?`<select id="${i}">${S.clients.map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>`:`<input id="${i}" type="${t==='n'?'number':t==='d'?'date':'text'}" value="${esc(v)}">`)};
+const fh=([p,l,t,op])=>{const v=o[p]??'',i='ef_'+p;return `<label>${l}</label>`+(t==='a'?`<textarea id="${i}" rows="3">${esc(v)}</textarea>`:t==='s'?`<select id="${i}">${op.map(x=>`<option ${x===v?'selected':''}>${esc(x)}</option>`).join('')}</select>`:t==='c'?`<select id="${i}">${(c==='tasks'||c==='contents')?`<option value="${INT_ID}" ${(v!==''&&+v===INT_ID)?'selected':''}>${INT_NOME}</option>`:''}${S.clients.map(x=>`<option value="${x.id}" ${x.id==v?'selected':''}>${esc(x.nome)}</option>`).join('')}</select>`:`<input id="${i}" type="${t==='n'?'number':t==='d'?'date':'text'}" value="${esc(v)}">`)};
 const ex=c==='tasks'?`<label>Checklist (uma linha por item; [x] no início = feito)</label><textarea id="ef_chk" rows="4">${(o.chk||[]).map(i=>(i.d?'[x] ':'')+i.t).join('\n')}</textarea>`:'';
 dlg(`<h3>${nw?'Novo':'Editar'} ${NM[c]}</h3><div style="max-height:62vh;overflow:auto;padding-right:4px">${F.map(fh).join('')}${ex}</div>`,()=>{const f0=F[0][0];if(!$('#ef_'+f0).value.trim())return toast('Preencha o campo principal');if(c==='contents'&&!nw&&cLock(o,$('#ef_st').value))return;if(c==='tasks'&&!nw&&o.st==='Em aprovação'&&!o.apr&&$('#ef_st').value!=='Em aprovação')return toast('Só muda de etapa depois que o cliente aprovar na conta dele');F.forEach(([p,,t])=>{const v=$('#ef_'+p).value;o[p]=(t==='n'||t==='c')?+v:v});
 if(c==='tasks'){o.chk=$('#ef_chk').value.split('\n').map(x=>x.trim()).filter(Boolean).map(x=>/^\[x\]/i.test(x)?{d:1,t:x.replace(/^\[x\]\s*/i,'')}:{d:0,t:x});}
