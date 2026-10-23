@@ -206,7 +206,7 @@ nav.mini .pf{justify-content:center;padding:6px 0}
 /* Padrão único: botões, ⋮ e seleções lado a lado têm a mesma altura e o mesmo estilo */
 :root{--h:30px}
 .btn,.btn.s,.btn:not(.s){min-height:var(--h);padding:0 11px;font-size:12px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.04em;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;white-space:nowrap;vertical-align:middle}
-.btn.hi,.btn.s.hi,.btn.hi:not(.s){text-transform:none!important;letter-spacing:0!important}
+.btn.hinf,.btn.s.hinf,.btn.hinf:not(.s){text-transform:none!important;letter-spacing:0!important;margin:0!important;font-size:12px!important;color:var(--tx)!important}
 .nbell{position:relative;flex:none;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:10px;cursor:pointer;padding:0}.nbell svg,.nbi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.nbd{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:var(--er);color:#fff;font:600 11px/18px "Space Grotesk",system-ui,sans-serif;font-style:normal;text-align:center}
 #np{position:fixed;z-index:60;top:calc(env(safe-area-inset-top,0px) + 62px);right:16px;width:min(400px,calc(100vw - 24px));max-height:calc(100dvh - 90px);display:flex;flex-direction:column;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:16px;box-shadow:0 12px 36px rgba(0,0,0,.18);overflow:hidden}
 .nph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--ln)}.nph b{flex:1;text-align:center;font-size:16px}.nbi{width:28px;display:flex;justify-content:center}.nx{width:28px;height:28px;padding:0;background:none;border:0;color:var(--mu);font-size:24px;line-height:1;cursor:pointer}
@@ -360,9 +360,9 @@ const whoEmp=()=>R==='cliente'?((S.clients.find(x=>x.id==ME.cid)||{}).nome||''):
 const HA={'aprovou o conteúdo':'Conteúdo aprovado','aprovou a entrega':'Entrega aprovada','pediu alteração':'Alteração solicitada','abriu a solicitação':'Solicitação aberta','iniciou a solicitação':'Solicitação iniciada','concluiu a solicitação':'Solicitação concluída','enviou para aprovação':'Enviado para aprovação'},hAct=a=>HA[a]||(a?a.charAt(0).toUpperCase()+a.slice(1):'');
 const hWho=h=>h.u+(h.emp&&h.emp!==h.u?' · '+h.emp:'');
 function hist(o,a,m){o.hist=o.hist||[];o.hist.push({u:who(),emp:whoEmp(),a,d:Date.now(),m:m||''})}
-function hInfo(coll,o){const h=o.hist;if(!h||!h.length)return '';const l=h[h.length-1],t=esc(hWho(l)+': '+hAct(l.a)+' em '+fdt(l.d));return `<button class="btn s g keep hi" style="text-transform:none" title="${t}" aria-label="Histórico de atividades" onclick="event.stopPropagation();showHist('${coll}',${o.id})">i</button>`}
+function hInfo(coll,o){const h=o.hist;if(!h||!h.length)return '';const l=h[h.length-1],t=esc(hWho(l)+': '+hAct(l.a)+' em '+fdt(l.d));return `<button class="btn s g keep hinf" style="text-transform:none;margin:0" title="${t}" aria-label="Histórico de atividades" onclick="event.stopPropagation();showHist('${coll}',${o.id})">i</button>`}
 function showHist(coll,id){const o=S[coll].find(x=>x.id==id);dlg(`<h3>Histórico de atividades</h3><p class="sub">${esc(o.t||o.assunto||'')}</p>${(o.hist||[]).slice().reverse().map(h=>`<div class="row"><span class="gr"><b>${esc(hWho(h))}</b><div>${esc(hAct(h.a))}</div>${h.m?`<div class="sub">${esc(h.m)}</div>`:''}</span><span class="sub">${fdt(h.d)}</span></div>`).join('')||'<div class="empty">Sem registros</div>'}`,()=>1,'Fechar');const cb=$('#dlg').querySelector('.btn.g');if(cb)cb.style.display='none'}
-function logIt(a,r,x){S.log.unshift({u:who()+(whoEmp()&&whoEmp()!==who()?' · '+whoEmp():''),a,r,d:Date.now(),c:(x&&x.cid!=null)?x.cid:nCid(r),x});S.log=S.log.slice(0,60);save()}
+function logIt(a,r,x){S.log.unshift({u:who()+(whoEmp()&&whoEmp()!==who()?' · '+whoEmp():''),a,r,d:Date.now(),c:(x&&x.cid!=null)?x.cid:nCid(r),i:ME.id,x});S.log=S.log.slice(0,60);save()}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');setTimeout(()=>t.classList.remove('on'),1800)}
 const TS=['A fazer','Em andamento','Em aprovação','Concluído'];
 const CS=['A fazer','Em andamento','Em aprovação','Concluído'];
@@ -425,11 +425,12 @@ IC.bell='<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>';
 let NOPEN=false,NALL=false;
 const NCK=['meet','chg','paid','rrej','rok','rdone'];
 const NCL=['agendou','registrou','solicitou pagamento','enviou','criou conteúdo','criou tarefa','moveu conteúdo','adicionou arquivo','concluiu','renovou','gerou faturas'];
-function nCid(r){const s=String(r||'');if(R==='cliente')return ME.cid;if(!s)return null;const c=(S.clients||[]).find(x=>x.nome===s);if(c)return c.id;for(const k of['tasks','contents','reqs','meets','projects','files','invoices']){const o=(S[k]||[]).find(x=>[x.t,x.assunto,x.titulo,x.nome,x.desc].includes(s));if(o&&o.cid!=null)return o.cid}return null}
+function nCid(r){const s=String(r||'');if(R==='cliente')return ME.cid;if(!s)return null;const c=(S.clients||[]).find(x=>x.nome===s);if(c)return c.id;for(const k of['tasks','contents','reqs','meetings','projects','files','invoices']){const o=(S[k]||[]).find(x=>[x.t,x.assunto,x.titulo,x.nome,x.desc].includes(s));if(o&&o.cid!=null)return o.cid}return null}
 const nKey=l=>l.d+'|'+l.u+'|'+l.a;
 function nRd(){try{return JSON.parse(localStorage.getItem('vg-nr-'+ME.id)||'[]')}catch(e){return[]}}
 function nSv(a){try{localStorage.setItem('vg-nr-'+ME.id,JSON.stringify(a.slice(-300)))}catch(e){}}
-function nList(){const L=(S&&S.log)||[];if(S.role==='admin')return L;const emp=whoEmp();return L.filter(l=>{const p=String(l.u).split(' · ');return p[1]?p[1]===emp:(l.x&&NCK.includes(l.x.k)?l.x.cid==ME.cid:(l.c!=null&&l.c==ME.cid&&NCL.some(x=>String(l.a).startsWith(x))))})}
+function nOwn(l){return l.i!=null?l.i===ME.id:l.u===who()+(whoEmp()&&whoEmp()!==who()?' · '+whoEmp():'')}
+function nList(){const L=((S&&S.log)||[]).filter(l=>!nOwn(l));if(S.role==='admin')return L;const emp=whoEmp(),cc=PCID();return L.filter(l=>{const p=String(l.u).split(' · ');return p[1]?p[1]===emp:(l.x&&NCK.includes(l.x.k)?l.x.cid==cc:(l.c!=null&&l.c==cc&&NCL.some(x=>String(l.a).startsWith(x))))})}
 function nCnt(){const r=nRd();return nList().filter(l=>!r.includes(nKey(l))).length}
 function agoN(ms){const m=Math.max(0,Math.round((Date.now()-ms)/60000));return m<1?'agora':m<60?m+' min atrás':m<1440?Math.round(m/60)+' h atrás':Math.round(m/1440)+' d atrás'}
 function nMsg(l){const x=l.x,p=String(l.u).split(' · '),cli=R==='cliente',nm=p[0],me=nm===ME.name&&(cli||!p[1]),A=esc(me?'Você':nm),Aq=A+(p[1]&&!cli?' ('+esc(p[1])+')':''),q=t=>'“'+esc(t)+'”',cn=x&&x.cid!=null?esc((cl(x.cid)||{}).nome||'o cliente'):'',ag=esc((S.cfg&&S.cfg.ag&&S.cfg.ag.nome)||'a agência'),
@@ -779,7 +780,7 @@ async function start(u){ME={id:u.id,name:u.nome,email:u.email,isOwner:u.role==='
  try{const s=await REF.get();if(s.exists)setS(JSON.parse(s.data().json));else if(ME.isOwner)save()}catch(e){if(u.role==='cliente'){toast('Não foi possível carregar seus dados');return}}
  S.role=(u.role==='cliente')?'cliente':'admin';
  await loadPay();const okP=p=>p&&(p.nome||p.banco||p.pix);if(u.role!=='cliente'){if(!okP(S.pay)&&okP(PAYSHARED))S.pay=PAYSHARED;if(!okP(PAYSHARED)&&okP(S.pay)){PAYSHARED=S.pay;savePay(S.pay,true)}if(syncPay())save()}
- if(u.role==='admin')loadUsers();$('#nav').style.display='';render();NOPEN=true;NALL=false;nDraw()}
+ if(u.role==='admin')loadUsers();$('#nav').style.display='';render()}
 function logout(){AUTH.logout().then(()=>location.reload())}
 async function boot(){try{const u=await AUTH.session();if(u)return start(u)}catch(e){}showLogin()}
 
