@@ -429,8 +429,13 @@ function nRd(){try{return JSON.parse(localStorage.getItem('vg-nr-'+ME.id)||'[]')
 function nSv(a){try{localStorage.setItem('vg-nr-'+ME.id,JSON.stringify(a.slice(-300)))}catch(e){}}
 /* As notificações nascem do histórico de cada item (reuniões, solicitações, conteúdos, tarefas, cobranças): é o que o servidor entrega ao cliente */
 function nOwnH(h){return h.i!=null?h.i===ME.id:(h.u===ME.name&&(R==='cliente'?(h.emp||'')===whoEmp():!h.emp))}
+function nFs(k){let m={};try{m=JSON.parse(localStorage.getItem('vg-fs-'+ME.id)||'{}')}catch(e){}if(!m[k]){m[k]=Date.now();try{localStorage.setItem('vg-fs-'+ME.id,JSON.stringify(m))}catch(e){}}return m[k]}
 function nList(){const cli=R==='cliente',cc=cli?PCID():null,E=[];
  [['reqs','assunto'],['tasks','t'],['contents','t'],['meetings','t'],['invoices','desc']].forEach(([c,f])=>(S[c]||[]).forEach(O=>{if(cli&&O.cid!=cc)return;(O.hist||[]).forEach(h=>{if(nOwnH(h))return;E.push({key:c+':'+O.id+':'+h.d+':'+h.a,c,O,h,d:h.d,title:O[f]||''})})}));
+ /* Reuniões e cobranças: se o servidor não entregar o histórico delas ao cliente, o item novo na lista dele já vira notificação */
+ if(cli){const T=D(),ag=(S.cfg&&S.cfg.ag&&S.cfg.ag.nome)||'Agência';
+  (S.meetings||[]).forEach(O=>{if(O.cid!=cc||O.done||!(O.data>=T)||(O.hist||[]).some(h=>!nOwnH(h)))return;const k='meetings:'+O.id+':novo';E.push({key:k,c:'meetings',O,h:{u:ag,emp:'',a:'agendou a reunião'},d:nFs(k),title:O.t||''})});
+  (S.invoices||[]).forEach(O=>{if(O.cid!=cc||O.pago||(O.hist||[]).some(h=>!nOwnH(h)))return;const k='invoices:'+O.id+':nova';E.push({key:k,c:'invoices',O,h:{u:ag,emp:'',a:'registrou a cobrança'},d:nFs(k),title:O.desc||''})})}
  return E.sort((a,b)=>b.d-a.d).slice(0,60)}
 function nCnt(){const r=nRd();return nList().filter(e=>!r.includes(e.key)).length}
 function agoN(ms){const m=Math.max(0,Math.round((Date.now()-ms)/60000));return m<1?'agora':m<60?m+' min atrás':m<1440?Math.round(m/60)+' h atrás':Math.round(m/1440)+' d atrás'}
