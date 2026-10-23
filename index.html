@@ -684,77 +684,80 @@ const propNum=()=>{const y=new Date().getFullYear(),n=S.props.filter(p=>String(p
 function pRow(i){i=i||{};return `<div class="pir" style="border:1px solid var(--ln);border-radius:8px;padding:10px;margin-top:8px"><input class="pd" placeholder="Serviço ou entrega (ex.: Gestão de Instagram)" value="${esc(i.d||'')}"><textarea class="pt" rows="2" placeholder="Detalhes: o que está incluso (opcional)" style="margin-top:6px">${esc(i.det||'')}</textarea><div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end;margin-top:6px"><div><label style="margin-top:0">Quantidade</label><input class="pq" type="number" min="0" step="any" value="${i.q??1}" oninput="pTot()"></div><div><label style="margin-top:0">Valor unitário (R$)</label><input class="pv" type="number" min="0" step="any" value="${i.v??''}" oninput="pTot()"></div><button type="button" class="btn s g" onclick="this.closest('.pir').remove();pTot()">Remover</button></div></div>`}
 function pTot(){const el=$('#ptot');if(!el)return;const sub=[...document.querySelectorAll('#pi .pir')].reduce((a,r)=>a+(+r.querySelector('.pq').value||0)*(+r.querySelector('.pv').value||0),0),d=+$('#p_desc').value||0,tot=sub*(1-d/100);el.innerHTML=`Subtotal ${money(sub)}${d?' · Desconto '+d+'%: -'+money(sub-tot):''}<br><b>Total ${money(tot)}</b>`}
 const PO={
-intro:{t:'Situação atual do cliente',mode:'p',ph:'Algo mais sobre a situação do cliente...',o:[
-['Está começando','{c} está começando sua presença digital e precisa de uma base sólida para ser encontrada pelo público certo.'],
-['Posta sem estratégia','{c} já está nas redes sociais, mas publica sem uma estratégia definida e com pouca regularidade.'],
-['Visual pouco profissional','O perfil de {c} ainda não reflete a qualidade do seu trabalho e precisa de uma identidade visual mais profissional.'],
-['Alcance sem conversão','{c} tem audiência, mas esse alcance ainda não se transforma em contatos e vendas.'],
-['Sem tempo para as redes','{c} não tem tempo de cuidar das redes sociais e precisa delegar essa rotina a uma equipe especializada.'],
-['Lançamento','{c} vai lançar um novo produto ou serviço e precisa de comunicação para apoiar esse momento.'],
-['Concorrência forte','{c} atua em um mercado competitivo e precisa se destacar e fortalecer o posicionamento da marca.']]},
-obj:{t:'Objetivos do cliente',mode:'l',lead:'Esta proposta tem como objetivo apoiar {c} a:',ph:'Escreva um objetivo por linha...',o:[
-['Mais presença','Aumentar a presença e o reconhecimento da marca nas redes sociais.'],
-['Gerar leads','Gerar mais contatos qualificados e oportunidades de venda.'],
-['Autoridade','Fortalecer a autoridade e a credibilidade de {c} no mercado.'],
-['Engajamento','Aumentar o engajamento e o relacionamento com a audiência.'],
-['Identidade visual','Profissionalizar a identidade visual e a comunicação da marca.'],
-['Consistência','Manter regularidade e consistência nas publicações.'],
-['Fidelizar','Fidelizar clientes atuais e estimular indicações.'],
-['Divulgar lançamento','Divulgar o lançamento de um novo produto ou serviço.']]},
-escopo:{t:'O que será entregue',mode:'l',lead:'Estão incluídos nesta proposta:',ph:'Uma entrega por linha...',o:[
-['Gestão de Instagram','Gestão completa do perfil no Instagram, incluindo planejamento, publicação e acompanhamento do desempenho.'],
-['Calendário editorial','Planejamento mensal de conteúdo, com calendário editorial alinhado aos objetivos e à identidade da marca.'],
-['Posts e carrosséis','Criação de artes estáticas e carrosséis para o feed, com legenda e hashtags.'],
-['Reels','Roteirização, edição e publicação de Reels, com foco em alcance e engajamento.'],
-['Stories','Criação e publicação de Stories para manter o relacionamento diário com a audiência.'],
+intro:{t:'Situação atual do cliente',mode:'p',ph:'Algo mais sobre a situação do cliente...',close:'Foi pensando nesse cenário que preparamos esta proposta.',o:[
+['Está começando','{c} está dando os primeiros passos no digital e precisa de uma base sólida para ser encontrada pelas pessoas certas.'],
+['Posta sem estratégia','{c} já está presente nas redes sociais, mas ainda publica sem um plano definido e de forma irregular.'],
+['Visual pouco profissional','{c} tem um trabalho de qualidade, mas o perfil ainda não mostra isso: falta uma identidade visual mais profissional.'],
+['Alcance sem conversão','{c} já tem audiência, mas esse alcance ainda não vira contato nem venda.'],
+['Sem tempo para as redes','{c} não tem tempo para cuidar das redes sociais e precisa de uma equipe que assuma essa rotina.'],
+['Lançamento','{c} vai lançar um novo produto ou serviço e precisa de uma comunicação que dê força a esse momento.'],
+['Concorrência forte','{c} atua em um mercado competitivo e precisa se destacar e deixar o seu posicionamento mais claro.']]},
+obj:{t:'Objetivos do cliente',mode:'l',pl:'Com este trabalho, queremos ajudar {c} a',lead:'Com este trabalho, queremos ajudar {c} a:',ph:'Escreva um objetivo por linha...',o:[
+['Mais presença','aumentar a presença da marca nas redes sociais'],
+['Gerar leads','gerar mais contatos qualificados'],
+['Autoridade','fortalecer a autoridade da marca no mercado'],
+['Engajamento','engajar mais a audiência'],
+['Identidade visual','profissionalizar a identidade visual da marca'],
+['Consistência','publicar com regularidade'],
+['Fidelizar','fidelizar os clientes atuais'],
+['Divulgar lançamento','divulgar o novo produto ou serviço']]},
+escopo:{t:'O que será entregue',mode:'l',lead:'Na prática, o trabalho inclui:',ph:'Uma entrega por linha...',o:[
+['Gestão de Instagram','Gestão completa do perfil no Instagram, do planejamento à publicação, com acompanhamento do desempenho.'],
+['Calendário editorial','Calendário editorial mensal, pensado a partir dos objetivos e da identidade da marca.'],
+['Posts e carrosséis','Criação de posts e carrosséis para o feed, já com legenda e hashtags.'],
+['Reels','Reels do roteiro à edição e publicação, pensados para gerar alcance e engajamento.'],
+['Stories','Stories para manter a marca presente no dia a dia da audiência.'],
 ['Padrão visual do perfil','Padronização visual do perfil (capa, destaques e templates), seguindo a identidade da marca.'],
-['Tráfego pago','Criação, configuração e otimização de campanhas de anúncios pagos, com acompanhamento dos resultados.'],
-['Interações','Monitoramento e resposta a comentários e mensagens diretas em horário comercial.'],
-['Captação de foto/vídeo','Captação presencial de fotos e vídeos, com data e roteiro combinados previamente.'],
-['Landing page','Criação de página de captação (landing page) otimizada para conversão.'],
-['Aprovação antes de publicar','Envio de todos os conteúdos para aprovação do cliente antes da publicação.'],
+['Tráfego pago','Campanhas de anúncios pagos: criação, configuração e otimização, com acompanhamento dos resultados.'],
+['Interações','Respostas a comentários e mensagens diretas em horário comercial.'],
+['Captação de foto/vídeo','Captação presencial de fotos e vídeos, com data e roteiro combinados antes.'],
+['Landing page','Landing page pensada para transformar visitantes em contatos.'],
+['Aprovação antes de publicar','Todo conteúdo é enviado para aprovação antes de ser publicado.'],
 ['Relatório mensal','Relatório mensal com as principais métricas, aprendizados e próximos passos.'],
-['Reunião mensal','Reunião mensal de alinhamento para apresentar resultados e definir as prioridades do período.']]},
-excl:{t:'O que não está incluso',mode:'l',lead:'Não estão incluídos nesta proposta:',ph:'Um item por linha...',o:[
-['Verba de anúncios','Investimento em anúncios (verba de mídia paga), que é pago diretamente pelo cliente à plataforma.'],
-['Foto/vídeo presencial','Produção presencial de fotos e vídeos, salvo se descrita no escopo.'],
+['Reunião mensal','Reunião mensal para apresentar os resultados e definir as prioridades do período.']]},
+excl:{t:'O que não está incluso',mode:'l',lead:'Para deixar tudo claro, não estão incluídos:',lead1:'Para deixar tudo claro, não está incluído:',ph:'Um item por linha...',o:[
+['Verba de anúncios','Verba de anúncios, que é paga diretamente pelo cliente à plataforma.'],
+['Foto/vídeo presencial','Produção presencial de fotos e vídeos, a menos que conste no escopo.'],
 ['Criação de logo','Criação de logotipo ou reformulação completa da identidade visual.'],
 ['Material impresso','Materiais impressos e peças para mídia off-line.'],
 ['Atendimento e vendas','Atendimento comercial e fechamento de vendas com os contatos gerados.'],
-['Ferramentas de terceiros','Custos com bancos de imagem, músicas, fontes ou ferramentas pagas de terceiros.'],
-['Itens fora do escopo','Serviços e entregas não listados no escopo, que poderão ser orçados à parte.']]},
-cresp:{t:'Responsabilidades do cliente',mode:'l',lead:'Para o bom andamento do trabalho, {c} se compromete a:',ph:'Uma responsabilidade por linha...',o:[
-['Enviar materiais','Enviar logotipo, fotos, textos e demais materiais necessários em até 3 dias úteis após a aprovação.'],
-['Fornecer acessos','Fornecer os acessos às redes sociais e ferramentas necessárias.'],
-['Aprovar em 2 dias','Aprovar ou solicitar ajustes nos conteúdos em até 2 dias úteis, para manter o cronograma.'],
-['Avisar novidades','Informar com antecedência promoções, datas e novidades do negócio.'],
-['Participar das reuniões','Participar das reuniões de alinhamento agendadas.'],
-['Autorizar imagem','Fornecer autorização de uso de imagem das pessoas que aparecerem nos conteúdos.'],
-['Pagar em dia','Cumprir os prazos e valores de pagamento acordados.']]},
-cond:{t:'Condições gerais',mode:'l',lead:'',ph:'Uma condição por linha...',o:[
-['Contrato de 12 meses','Contrato com duração mínima de 12 meses, renovável mediante acordo entre as partes.'],
-['Reajuste anual','Os valores serão reajustados anualmente pela variação do IPCA ou índice equivalente.'],
-['Cancelamento com 30 dias','O cancelamento deve ser comunicado por escrito, com aviso prévio de 30 dias.'],
-['2 rodadas de ajustes','Cada conteúdo inclui até 2 rodadas de ajustes; alterações adicionais poderão ser cobradas à parte.'],
-['Sem garantia de resultado','Os resultados dependem de fatores externos (algoritmos das plataformas, mercado, verba), por isso não há garantia de números específicos.'],
-['Uso em portfólio','{a} poderá usar os trabalhos realizados em seu portfólio, salvo solicitação contrária do cliente.'],
-['Confidencialidade','As informações trocadas entre as partes serão tratadas com confidencialidade.'],
-['Validade da proposta','Esta proposta é válida até a data indicada, e os valores podem ser revistos após esse prazo.']]},
+['Ferramentas de terceiros','Custos com bancos de imagem, músicas, fontes e ferramentas pagas de terceiros.'],
+['Itens fora do escopo','Entregas que não estejam listadas no escopo, que podem ser orçadas à parte.']]},
+cresp:{t:'Responsabilidades do cliente',mode:'l',lead:'Para o trabalho andar sem atrasos, contamos com o cliente para:',ph:'Uma responsabilidade por linha...',o:[
+['Enviar materiais','Enviar logotipo, fotos, textos e demais materiais em até 3 dias úteis após a aprovação.'],
+['Fornecer acessos','Liberar os acessos às redes sociais e ferramentas necessárias.'],
+['Aprovar em 2 dias','Aprovar os conteúdos ou pedir ajustes em até 2 dias úteis, para manter o cronograma em dia.'],
+['Avisar novidades','Avisar com antecedência sobre promoções, datas e novidades do negócio.'],
+['Participar das reuniões','Participar das reuniões de alinhamento.'],
+['Autorizar imagem','Autorizar o uso de imagem das pessoas que aparecerem nos conteúdos.'],
+['Pagar em dia','Manter os pagamentos em dia, conforme combinado.']]},
+cond:{t:'Condições gerais',mode:'l',lead:'Algumas condições para alinhar as expectativas:',lead1:'Uma condição para alinhar as expectativas:',ph:'Uma condição por linha...',o:[
+['Contrato de 12 meses','Contrato com duração mínima de 12 meses, podendo ser renovado de comum acordo.'],
+['Reajuste anual','Reajuste anual dos valores pela variação do IPCA ou índice equivalente.'],
+['Cancelamento com 30 dias','Cancelamento mediante aviso por escrito, com 30 dias de antecedência.'],
+['2 rodadas de ajustes','Cada conteúdo inclui até 2 rodadas de ajustes; alterações além disso podem ser cobradas à parte.'],
+['Sem garantia de resultado','Os resultados dependem de fatores externos, como algoritmos das plataformas, mercado e verba; por isso, não garantimos números específicos.'],
+['Uso em portfólio','{a} pode usar os trabalhos realizados em seu portfólio, a menos que o cliente prefira que não.'],
+['Confidencialidade','As informações trocadas entre as partes são tratadas com confidencialidade.'],
+['Validade da proposta','Esta proposta vale até a data indicada; depois disso, os valores podem ser revistos.']]},
 pag:{t:'Condições de pagamento',mode:'l',lead:'',ph:'Uma condição por linha...',o:[
 ['Mensal, dia 10','Pagamento mensal, com vencimento todo dia 10.'],
 ['50% + 50%','50% na aprovação da proposta e 50% na entrega.'],
-['À vista','Pagamento à vista, por Pix ou transferência.'],
-['Cartão','Parcelamento no cartão de crédito, conforme combinado.'],
-['Antes de começar','Primeira cobrança na assinatura do contrato, antes do início dos trabalhos.'],
-['Multa por atraso','Atraso no pagamento sujeito a multa de 2% e juros de 1% ao mês.']]}
+['À vista','Pagamento à vista, via Pix ou transferência.'],
+['Cartão','Parcelamento no cartão de crédito, nos termos combinados.'],
+['Antes de começar','A primeira cobrança acontece na assinatura do contrato, antes de começarmos.'],
+['Multa por atraso','Em caso de atraso, multa de 2% e juros de 1% ao mês.']]}
 };
 const pCli=()=>{const g=i=>{const x=document.getElementById(i);return x?x.value.trim():''};return g('p_emp')||g('p_nome')||'o cliente'};
 const pKeys=Object.keys(PO);
 function pCmp(k){const c=PO[k],cli=pCli(),ag=(S.cfg&&S.cfg.ag&&S.cfg.ag.nome)||'A agência',f=t=>t.replace(/\{c\}/g,cli).replace(/\{a\}/g,ag),up=t=>t.charAt(0).toUpperCase()+t.slice(1),
- tt=[...document.querySelectorAll('#pk_'+k+' .po.on:not(.cu)')].map(b=>up(f(c.o[b.dataset.i][1]))),ct=document.getElementById('pc_'+k),cu=ct&&ct.style.display!=='none'?ct.value.trim():'';
- if(c.mode==='p')return [tt.join(' '),cu].filter(Boolean).join('\n\n');
- const li=[...tt,...cu.split('\n').map(x=>x.trim().replace(/^[•\-–*]\s*/,'')).filter(Boolean).map(up)];
- return li.length?(c.lead?f(c.lead)+'\n':'')+li.map(x=>'• '+x).join('\n'):''}
+ on=[...document.querySelectorAll('#pk_'+k+' .po.on:not(.cu)')].map(b=>c.o[b.dataset.i][1]),ct=document.getElementById('pc_'+k),cu=ct&&ct.style.display!=='none'?ct.value.trim():'';
+ if(c.mode==='p'){const n=on.length,tx=on.map((t,i)=>{if(!i)return t.startsWith('{c}')?f(t):up(f(t));const cn=(i===n-1&&n>2)?'Por fim,':['Além disso,','Ao mesmo tempo,','Também,'][(i-1)%3];return cn+' '+f(t.replace('{c}','a marca'))}).join(' ');
+  return [tx+(n&&!cu&&c.close?' '+f(c.close):''),cu].filter(Boolean).join('\n\n')}
+ const cl=cu.split('\n').map(x=>x.trim().replace(/^[•\-–*]\s*/,'')).filter(Boolean).map(up);
+ if(c.pl&&on.length&&on.length<=3&&!cl.length){const p=on.map(t=>f(t).replace(/\.$/,''));return f(c.pl)+' '+(p.length>1?p.slice(0,-1).join(', ')+' e '+p[p.length-1]:p[0])+'.'}
+ const li=[...on.map(t=>up(f(t))),...cl],ld=li.length===1&&c.lead1!=null?c.lead1:c.lead;
+ return li.length?(ld?f(ld)+'\n':'')+li.map(x=>'• '+x).join('\n'):''}
 function pUpd(k){const el=document.getElementById('pv_'+k);if(!el)return;const t=pCmp(k);el.textContent=t;el.style.display=t?'block':'none'}
 const pAll=()=>pKeys.forEach(pUpd);
 function pTg(b,k){b.classList.toggle('on');if(b.classList.contains('cu')){const t=document.getElementById('pc_'+k),on=b.classList.contains('on');t.style.display=on?'block':'none';if(on)t.focus()}pUpd(k)}
@@ -773,12 +776,11 @@ ${sec('Cliente')}${g(fi('p_nome','Nome do contato','nome')+fi('p_emp','Empresa',
 ${sec('Apresentação')}<div class="sub" style="margin-bottom:2px">Marque as opções que se aplicam: os textos completos são montados automaticamente. Use “Personalizar” para escrever do seu jeito.</div>${pPick('intro',e)}${pPick('obj',e)}${pPick('escopo',e)}
 ${sec('Serviços e valores')}<div id="pi">${it.map(pRow).join('')}</div><button type="button" class="btn s g" style="margin-top:8px" onclick="$('#pi').insertAdjacentHTML('beforeend',pRow({q:1}))">+ Adicionar item</button>
 ${g(`<div><label>Desconto (%)</label><input id="p_desc" type="number" min="0" max="100" step="any" value="${e?e.desc||0:0}" oninput="pTot()"></div><div><label>Tipo de cobrança</label><select id="p_rec">${[['Mensal','Mensal (cobrança todo mês)'],['Anual','Anual'],['Único','Pontual / valor único']].map(([k,l])=>`<option value="${k}" ${(e?e.rec:'Mensal')===k?'selected':''}>${l}</option>`).join('')}</select></div>`)}<div id="ptot" class="sub" style="margin-top:8px"></div>
-${sec('Prazos')}${g(fi('p_inicio','Início previsto','inicio','','date')+fi('p_prazo','Prazo de entrega ou duração','prazo','','text','Ex.: 30 dias corridos'))}
 ${sec('Pagamento')}${fi('p_forma','Formas de pagamento','forma','Pix, boleto ou cartão')}${pPick('pag',e)}
 ${sec('Condições')}${pPick('excl',e)}${pPick('cresp',e)}${pPick('cond',e)}${ta('p_prox','Próximos passos','prox','1. Aprovação desta proposta.\n2. Assinatura do contrato.\n3. Reunião de onboarding.\n4. Início dos trabalhos.',4)}${fi('p_por','Responsável pela proposta (Vistografia)','por',who())}
 ${attHtml}</div>`,()=>{const gv=i=>$('#'+i).value,nome=gv('p_nome').trim(),itens=[...document.querySelectorAll('#pi .pir')].map(r=>({d:r.querySelector('.pd').value.trim(),det:r.querySelector('.pt').value.trim(),q:+r.querySelector('.pq').value,v:+r.querySelector('.pv').value||0})).filter(i=>i.d&&i.q>0);
  if(!nome)return toast('Informe o nome do cliente');if(!itens.length)return toast('Adicione ao menos um serviço com quantidade');if(!gv('p_val'))return toast('Informe até quando a proposta é válida');
- const o={num:gv('p_num').trim(),emit:gv('p_emit'),val:gv('p_val'),titulo:gv('p_titulo').trim(),nome,emp:gv('p_emp').trim()||nome,doc:gv('p_doc').trim(),email:gv('p_email').trim(),tel:gv('p_tel').trim(),intro:pCmp('intro'),obj:pCmp('obj'),escopo:pCmp('escopo'),itens,desc:Math.min(100,Math.max(0,+gv('p_desc')||0)),rec:gv('p_rec'),inicio:gv('p_inicio'),prazo:gv('p_prazo').trim(),forma:gv('p_forma').trim(),pag:pCmp('pag'),excl:pCmp('excl'),cresp:pCmp('cresp'),cond:pCmp('cond'),prox:gv('p_prox'),por:gv('p_por').trim(),sel:pSel(),cus:pCus()};
+ const o={num:gv('p_num').trim(),emit:gv('p_emit'),val:gv('p_val'),titulo:gv('p_titulo').trim(),nome,emp:gv('p_emp').trim()||nome,doc:gv('p_doc').trim(),email:gv('p_email').trim(),tel:gv('p_tel').trim(),intro:pCmp('intro'),obj:pCmp('obj'),escopo:pCmp('escopo'),itens,desc:Math.min(100,Math.max(0,+gv('p_desc')||0)),rec:gv('p_rec'),forma:gv('p_forma').trim(),pag:pCmp('pag'),excl:pCmp('excl'),cresp:pCmp('cresp'),cond:pCmp('cond'),prox:gv('p_prox'),por:gv('p_por').trim(),sel:pSel(),cus:pCus()};
  const mk=a=>{let pid;if(e){Object.assign(e,o);if(a)e.anexo=a;pid=e.id;logIt('editou proposta',nome)}else{pid=nid();S.props.push({...o,id:pid,st:'Rascunho',anexo:a});logIt('criou proposta',nome)}toast('Proposta salva');printProp(pid)};return attTake(mk)},'Salvar e gerar PDF');
  $('#dlg').style.width='min(780px,94vw)';pTot();pAll();['p_nome','p_emp'].forEach(i=>$('#'+i).addEventListener('input',pAll))}
 const BF=[['Sobre a empresa',[['historia','História'],['produtos','Produtos e serviços'],['dif','Diferenciais']]],['Público e objetivos',[['publico','Público-alvo'],['personas','Personas'],['obj','Objetivos'],['conc','Concorrentes'],['ref','Referências']]],['Comunicação',[['tom','Tom de voz'],['estilo','Estilo visual'],['cores','Cores'],['tipo','Tipografia']]],['Conteúdo',[['prior','Assuntos prioritários'],['proib','Assuntos proibidos'],['pperm','Palavras permitidas'],['pproib','Palavras proibidas'],['cta','CTA preferido'],['freq','Frequência de publicação'],['plat','Plataformas utilizadas']]]];
@@ -998,7 +1000,7 @@ function propDoc(p){const sub=p.itens.reduce((a,i)=>a+i.q*i.v,0),tot=ptotal(p),g
  info=[g.cnpj,g.tel,g.end].filter(Boolean).map(esc).join('<br>'),cli=[p.doc,p.email,p.tel].filter(Boolean).map(esc).join(' · '),
  suf=p.rec==='Mensal'?' / mês':p.rec==='Anual'?' / ano':'',cob=p.rec==='Mensal'?'Cobrança mensal':p.rec==='Anual'?'Cobrança anual':'Pagamento único',
  th=(l,r)=>`<th style="${td};font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:${g6};font-weight:500;text-align:${r?'right':'left'}">${l}</th>`;
- return `<style>@page{size:A4;margin:14mm}.pdoc table{border-collapse:collapse}.pdoc tr,.pk{break-inside:avoid;page-break-inside:avoid}.pdoc,.pdoc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}@media print{.pdoc{padding:0!important;max-width:none!important}}</style><div class="pdoc" style="max-width:780px;margin:0 auto;padding:48px 40px;font-family:'Space Grotesk',system-ui,sans-serif;color:#111;line-height:1.5;font-size:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid #111;padding-bottom:18px"><div>${LOGOP?`<img alt="${ag}" src="${LOGOP}" style="height:46px;width:auto;display:block">`:`<div style="font-size:30px;font-weight:600;letter-spacing:-.03em">${ag}</div>`}<div style="font-size:12px;color:${g6};margin-top:8px">${info}</div></div><div style="text-align:right"><div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${g6}">Proposta comercial</div>${p.num?`<div style="font-size:20px;font-weight:600">Nº ${esc(p.num)}</div>`:''}<div style="font-size:12px;color:${g6};margin-top:4px">${p.emit?'Emitida em '+fd(p.emit)+'<br>':''}Válida até ${fd(p.val)}</div></div></div>${p.titulo?`<h1 style="font-size:28px;letter-spacing:-.03em;margin:28px 0 0;line-height:1.15">${esc(p.titulo)}</h1>`:''}<div class="pk" style="margin-top:22px;background:#f6f6f6;border-radius:8px;padding:14px 16px"><div style="font-size:12px;color:${g6}">Preparada para</div><div style="font-size:20px;font-weight:600">${esc(p.nome)}</div><div style="color:${g6}">${esc(p.emp||'')}${cli?'<br>'+cli:''}</div></div>${sec('Apresentação',tx(p.intro))}${sec('Objetivo',tx(p.obj))}${sec('Escopo',tx(p.escopo))}${sec('Investimento',`<table style="width:100%;font-size:14px"><tr>${th('Serviço')}${th('Qtd',1)}${th('Valor',1)}${th('Total',1)}</tr>${p.itens.map(i=>`<tr><td style="${td}"><b>${esc(i.d)}</b>${i.det?`<div style="font-size:12.5px;color:${g6};white-space:pre-wrap">${esc(i.det)}</div>`:''}</td><td style="${td};text-align:right">${i.q}</td><td style="${td};text-align:right">${mD(i.v)}</td><td style="${td};text-align:right">${mD(i.q*i.v)}</td></tr>`).join('')}</table><div class="pk" style="text-align:right;margin-top:14px">Subtotal ${mD(sub)}${p.desc?`<br>Desconto ${p.desc}%: -${mD(sub-tot)}`:''}<div style="font-size:26px;font-weight:600;margin-top:6px">Total ${mD(tot)}${suf}</div><div style="font-size:12px;color:${g6}">${cob}</div></div>`)}${sec('Prazos',p.inicio||p.prazo?`<div style="display:flex;gap:20px;flex-wrap:wrap">${kv('Início previsto',p.inicio?fd(p.inicio):'')}${kv('Prazo / duração',p.prazo)}</div>`:'')}${sec('Pagamento',p.forma||p.pag?(p.forma?`<div><b>Formas:</b> ${esc(p.forma)}</div>`:'')+tx(p.pag):'')}${sec('O que não está incluso',tx(p.excl))}${sec('Responsabilidades do cliente',tx(p.cresp))}${sec('Condições gerais',tx(p.cond))}${sec('Próximos passos',tx(p.prox))}<div class="pk" style="margin-top:46px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${g6}">Aceite</div><p style="margin:6px 0 0;font-size:13px;color:${g6}">Ao assinar abaixo, o cliente aprova esta proposta nas condições descritas.</p><div style="display:flex;gap:40px;margin-top:56px"><div style="flex:1;border-top:1px solid #111;padding-top:6px;font-size:13px">${ag}${p.por?'<br>'+esc(p.por):''}</div><div style="flex:1;border-top:1px solid #111;padding-top:6px;font-size:13px">${esc(p.nome)}${p.emp&&p.emp!==p.nome?'<br>'+esc(p.emp):''}</div></div><div style="margin-top:22px;font-size:13px;color:${g6}">Local e data: ______________________</div></div></div>`}
+ return `<style>@page{size:A4;margin:0}.pws{height:0}@media print{.pws{height:14mm}}.pdoc table{border-collapse:collapse}.pdoc tr,.pk{break-inside:avoid;page-break-inside:avoid}.pdoc,.pdoc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}@media print{.pdoc{padding:0 14mm!important;max-width:none!important}}</style><table class="pw" style="width:100%;border-collapse:collapse"><thead><tr><td class="pws" style="padding:0"></td></tr></thead><tfoot><tr><td class="pws" style="padding:0"></td></tr></tfoot><tbody><tr><td style="padding:0"><div class="pdoc" style="max-width:780px;margin:0 auto;padding:48px 40px;font-family:'Space Grotesk',system-ui,sans-serif;color:#111;line-height:1.5;font-size:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:2px solid #111;padding-bottom:18px"><div>${LOGOP?`<img alt="${ag}" src="${LOGOP}" style="height:46px;width:auto;display:block">`:`<div style="font-size:30px;font-weight:600;letter-spacing:-.03em">${ag}</div>`}<div style="font-size:12px;color:${g6};margin-top:8px">${info}</div></div><div style="text-align:right"><div style="font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:${g6}">Proposta comercial</div>${p.num?`<div style="font-size:20px;font-weight:600">Nº ${esc(p.num)}</div>`:''}<div style="font-size:12px;color:${g6};margin-top:4px">${p.emit?'Emitida em '+fd(p.emit)+'<br>':''}Válida até ${fd(p.val)}</div></div></div>${p.titulo?`<h1 style="font-size:28px;letter-spacing:-.03em;margin:28px 0 0;line-height:1.15">${esc(p.titulo)}</h1>`:''}<div class="pk" style="margin-top:22px;background:#f6f6f6;border-radius:8px;padding:14px 16px"><div style="font-size:12px;color:${g6}">Preparada para</div><div style="font-size:20px;font-weight:600">${esc(p.nome)}</div><div style="color:${g6}">${esc(p.emp||'')}${cli?'<br>'+cli:''}</div></div>${sec('Apresentação',tx(p.intro))}${sec('Objetivo',tx(p.obj))}${sec('Escopo',tx(p.escopo))}${sec('Investimento',`<table style="width:100%;font-size:14px"><tr>${th('Serviço')}${th('Qtd',1)}${th('Valor',1)}${th('Total',1)}</tr>${p.itens.map(i=>`<tr><td style="${td}"><b>${esc(i.d)}</b>${i.det?`<div style="font-size:12.5px;color:${g6};white-space:pre-wrap">${esc(i.det)}</div>`:''}</td><td style="${td};text-align:right">${i.q}</td><td style="${td};text-align:right">${mD(i.v)}</td><td style="${td};text-align:right">${mD(i.q*i.v)}</td></tr>`).join('')}</table><div class="pk" style="text-align:right;margin-top:14px">Subtotal ${mD(sub)}${p.desc?`<br>Desconto ${p.desc}%: -${mD(sub-tot)}`:''}<div style="font-size:26px;font-weight:600;margin-top:6px">Total ${mD(tot)}${suf}</div><div style="font-size:12px;color:${g6}">${cob}</div></div>`)}${sec('Pagamento',p.forma||p.pag?(p.forma?`<div><b>Formas:</b> ${esc(p.forma)}</div>`:'')+tx(p.pag):'')}${sec('O que não está incluso',tx(p.excl))}${sec('Responsabilidades do cliente',tx(p.cresp))}${sec('Condições gerais',tx(p.cond))}${sec('Próximos passos',tx(p.prox))}<div class="pk" style="margin-top:46px"><div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${g6}">Aceite</div><p style="margin:6px 0 0;font-size:13px;color:${g6}">Ao assinar abaixo, o cliente aprova esta proposta nas condições descritas.</p><div style="display:flex;gap:40px;margin-top:56px"><div style="flex:1;border-top:1px solid #111;padding-top:6px;font-size:13px">${ag}${p.por?'<br>'+esc(p.por):''}</div><div style="flex:1;border-top:1px solid #111;padding-top:6px;font-size:13px">${esc(p.nome)}${p.emp&&p.emp!==p.nome?'<br>'+esc(p.emp):''}</div></div><div style="margin-top:22px;font-size:13px;color:${g6};display:flex;align-items:flex-end;gap:8px;max-width:440px"><span>Local e data:</span><span style="flex:1;border-bottom:1px solid #111;height:1px"></span></div></div></div></td></tr></tbody></table>`}
 function printProp(id){const p=P_(id);let e=document.getElementById('pp');if(e)e.remove();e=document.createElement('div');e.id='pp';e.innerHTML=`<div class="noprint" style="position:sticky;top:0;background:#111;padding:10px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap"><button class="btn" style="background:#fff;color:#111" onclick="window.print()">Imprimir / salvar PDF</button><button class="btn g" onclick="dlProp(${id})">Baixar HTML</button><button class="btn g" onclick="document.getElementById('pp').remove()">Fechar</button></div>`+propDoc(p);document.body.appendChild(e)}
 async function dlProp(id){const p=P_(id);try{await saveFile({filename:'proposta-'+p.nome.replace(/[^\w-]+/g,'-')+'.html',data:'<!doctype html><meta charset="utf-8"><title>Proposta</title>'+propDoc(p)});toast('Proposta salva')}catch(e){toast('Download cancelado')}}
 (()=>{['dragover','drop'].forEach(t=>document.addEventListener(t,e=>{const dt=e.dataTransfer;if(!dt||!Array.from(dt.types||[]).includes('Files'))return;e.preventDefault();
