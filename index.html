@@ -16,7 +16,7 @@ nav a.on{background:var(--acs);color:var(--ac);font-weight:600}
 main{flex:1;min-width:0;padding:20px 24px 60px;max-width:1100px}
 .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:16px}
 .top h2{margin:0;font-size:22px;flex:1}
-.burger{display:none}
+
 .btn{background:var(--ac);color:#fff;border:0;border-radius:8px;padding:8px 13px;cursor:pointer;font-weight:600}
 .btn.g{background:var(--sf);color:var(--tx);border:1px solid var(--ln)}
 .btn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-3px}
@@ -48,7 +48,7 @@ input,select,textarea{width:100%;padding:8px;border:1px solid var(--ln);border-r
 .empty{color:var(--mu);padding:14px;text-align:center}
 @media(max-width:760px){
 nav{position:fixed;left:-240px;z-index:20;transition:.2s;top:0;box-shadow:0 0 30px rgba(0,0,0,.2)}nav.open{left:0}
-.burger{display:inline-block}main{padding:14px 14px 60px}.two{grid-template-columns:1fr}}
+main{padding:14px 14px 60px}.two{grid-template-columns:1fr}}
 .btn{color:var(--on)}.btn.r{color:#fff}.btn.g{color:var(--tx)}
 *{border-radius:0!important}.bd{border-radius:99px!important}.bar,.bar i{border-radius:99px!important}
 .btn:not(.s){text-transform:uppercase;letter-spacing:.06em;font-size:13px;padding:11px 18px}.btn.s{font-size:12px;padding:5px 10px}
@@ -439,8 +439,6 @@ let RFB=0;
 async function refreshClient(){if(!REF||PREV||RFB||document.hidden||document.querySelector('dialog[open]'))return;RFB=1;try{const g=await REF.get();if(g.exists){const a=JSON.stringify(S);mergeRemote(JSON.parse(g.data().json));if(JSON.stringify(S)!==a)render()}}catch(e){}RFB=0}
 setInterval(refreshClient,10000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshClient()});
 function go(v,c){if(v==='team')loadUsers();view=v;cid=c||null;tab='Visão geral';$('#nav').classList.remove('open');render();if(R==='cliente')refreshClient()}
-function menuToggle(e){if(e)e.stopPropagation();$('#nav').classList.toggle('open')}
-document.addEventListener('click',e=>{const n=document.getElementById('nav');if(n&&n.classList.contains('open')&&!e.target.closest('nav')&&!e.target.closest('.burger'))n.classList.remove('open')});
 function hdr(t,btn){return `<div class="top"><h2>${t}</h2>${btn||''}</div>`}
 function ago(ms){const m=Math.round((Date.now()-ms)/60000);return m<60?m+' min atrás':Math.round(m/60)+' h atrás'}
 function dash(){
