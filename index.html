@@ -207,7 +207,7 @@ nav.mini .pf{justify-content:center;padding:6px 0}
 :root{--h:30px}
 .btn,.btn.s,.btn:not(.s){min-height:var(--h);padding:0 11px;font-size:12px;font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:.04em;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center;gap:6px;box-sizing:border-box;white-space:nowrap;vertical-align:middle}
 .btn.hinf,.btn.s.hinf,.btn.hinf:not(.s){text-transform:none!important;letter-spacing:0!important;margin:0!important;font-size:12px!important;color:var(--tx)!important}
-.nbell{position:relative;flex:none;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:10px;cursor:pointer;padding:0}.nbell svg,.nbi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.nbd{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:var(--er);color:#fff;font:600 11px/18px "Space Grotesk",system-ui,sans-serif;font-style:normal;text-align:center}
+.nbell{position:relative;flex:none;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:10px;cursor:pointer;padding:0}.nmenu{display:none;position:relative;flex:none;width:40px;height:40px;align-items:center;justify-content:center;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:10px;cursor:pointer;padding:0}.nmenu svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round}@media(max-width:760px){.nmenu{display:inline-flex}}#nbk{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:19}.nbell svg,.nbi svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.nbd{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;box-sizing:border-box;border-radius:9px;background:var(--er);color:#fff;font:600 11px/18px "Space Grotesk",system-ui,sans-serif;font-style:normal;text-align:center}
 #np{position:fixed;z-index:60;top:calc(env(safe-area-inset-top,0px) + 62px);right:16px;width:min(400px,calc(100vw - 24px));max-height:calc(100dvh - 90px);display:flex;flex-direction:column;background:var(--sf);color:var(--tx);border:1px solid var(--ln);border-radius:16px;box-shadow:0 12px 36px rgba(0,0,0,.18);overflow:hidden}
 .nph{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--ln)}.nph b{flex:1;text-align:center;font-size:16px}.nbi{width:28px;display:flex;justify-content:center}.nx{width:28px;height:28px;padding:0;background:none;border:0;color:var(--mu);font-size:24px;line-height:1;cursor:pointer}
 .nsub{display:flex;gap:8px;padding:10px 16px;border-bottom:1px solid var(--ln)}.nbtn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 10px;border:1px solid var(--ln);border-radius:10px;background:var(--sf);color:var(--tx);font:inherit;font-size:13px;font-weight:600;cursor:pointer;text-transform:none;letter-spacing:0;white-space:nowrap}.nbtn:hover:not(:disabled){background:var(--acs)}.nbtn:disabled{opacity:.45;cursor:default}.nbtn.rm{color:var(--er)}.nbtn svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.nlk{background:none;border:0;padding:0;font:inherit;font-size:12px;color:var(--mu);text-decoration:underline;cursor:pointer;min-height:0;text-transform:none;letter-spacing:0}
@@ -421,6 +421,7 @@ eye:'<path d="M2 12s3.600-7 10-7 10 7 10 7-3.600 7-10 7S2 12 2 12z"/><circle cx=
 out:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'};
 const ico=(k,c)=>`<svg class="${c||''}" viewBox="0 0 24 24" aria-hidden="true">${IC[k]||IC.dash}</svg>`;
 /* ===== NOTIFICAÇÕES ===== */
+IC.menu='<path d="M4 7h16M4 12h16M4 17h16"/>';
 IC.chk='<path d="M5 12.5l4.5 4.5L19 7.5"/>';
 IC.bell='<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/>';
 let NOPEN=false,NALL=false;
@@ -460,6 +461,7 @@ function nDraw(){const b=document.getElementById('nbell');if(b&&S){const c=nCnt(
  let p=document.getElementById('np');if(!NOPEN||!S){if(p)p.remove();return}
  if(!p){p=document.createElement('div');p.id='np';p.setAttribute('role','dialog');p.setAttribute('aria-label','Notificações');document.body.appendChild(p)}
  const sc=(p.querySelector('.nlist')||{}).scrollTop||0;p.innerHTML=nHtml();const l=p.querySelector('.nlist');if(l)l.scrollTop=sc}
+function navMobile(f){const n=$('#nav'),o=f===undefined?!n.classList.contains('open'):f;n.classList.toggle('open',o);let b=document.getElementById('nbk');if(o&&!b){b=document.createElement('div');b.id='nbk';b.onclick=()=>navMobile(false);document.body.appendChild(b)}if(!o&&b)b.remove()}
 function nToggle(){NOPEN=!NOPEN;nDraw()}
 function nClose(){NOPEN=false;nDraw()}
 function nTog(i){const l=nList()[i];if(!l)return;const k=l.key;let r=nRd();r=r.includes(k)?r.filter(x=>x!==k):r.concat(k);nSv(r);nDraw()}
@@ -484,15 +486,15 @@ document.addEventListener('click',e=>{if(!e.target.closest('#pm,.pf'))pmClose()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')pmClose()});
 function render(){autoInad();const lp=document.getElementById('lp');if(lp)lp.remove();if(S.cfg&&S.cfg.stages)LS.splice(0,LS.length,...S.cfg.stages);
  const m=S.role==='admin'?ALL.filter(x=>myPerm().includes(x[0])):[['dash','Dashboard'],['content','Aprovações'+(APN()?' ('+APN()+')':'')],['cal','Calendário'],['files','Arquivos'],['req','Solicitações'],['meet','Reuniões'],['fin','Financeiro']];
- {const sc=($('#nav .ns')||{}).scrollTop||0;$('#nav').innerHTML=navHtml(m);$('#nav').classList.toggle('mini',NMINI);const ns=$('#nav .ns');if(ns)ns.scrollTop=sc}
+ {const sc=($('#nav .ns')||{}).scrollTop||0;$('#nav').innerHTML=navHtml(m);$('#nav').classList.toggle('mini',NMINI&&innerWidth>760);const ns=$('#nav .ns');if(ns)ns.scrollTop=sc}
  if(!(view==='client'?myPerm().some(x=>x==='clients'||x==='brands'):myPerm().includes(view)))view='dash';
  const v={dash,crm,prop,contr,clients,brands,client,tasks,content,fin,team,req:reqs,meet:meets,proj,cal,rep,kb,notif,files,docs,staff,cfg}[view];
- $('#main').innerHTML='<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px"><div style="position:relative;flex:1;min-width:0"><input id="gs" placeholder="Busca global: cliente, tarefa, conteúdo, projeto…" oninput="gsearch(this.value)"><div id="gsr" class="card" style="display:none;position:absolute;left:0;right:0;z-index:5;max-height:300px;overflow:auto"></div></div><button id="nbell" class="nbell" type="button" onclick="nToggle()"></button></div>'+v();kebabize($('#main'));nDraw();
+ $('#main').innerHTML='<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px"><button id="nmenu" class="nmenu" type="button" aria-label="Abrir menu" onclick="navMobile()">'+ico('menu')+'</button><div style="position:relative;flex:1;min-width:0"><input id="gs" placeholder="Busca global: cliente, tarefa, conteúdo, projeto…" oninput="gsearch(this.value)"><div id="gsr" class="card" style="display:none;position:absolute;left:0;right:0;z-index:5;max-height:300px;overflow:auto"></div></div><button id="nbell" class="nbell" type="button" onclick="nToggle()"></button></div>'+v();kebabize($('#main'));nDraw();
 }
 let RFB=0;
 async function refreshClient(){if(!REF||PREV||RFB||document.hidden||document.querySelector('dialog[open]'))return;RFB=1;try{const g=await REF.get();if(g.exists){const a=JSON.stringify(S);mergeRemote(JSON.parse(g.data().json));if(JSON.stringify(S)!==a)render()}}catch(e){}RFB=0}
 setInterval(refreshClient,10000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshClient()});
-function go(v,c){if(v==='team')loadUsers();view=v;cid=c||null;tab='Visão geral';$('#nav').classList.remove('open');render();if(R==='cliente')refreshClient()}
+function go(v,c){if(v==='team')loadUsers();view=v;cid=c||null;tab='Visão geral';navMobile(false);render();if(R==='cliente')refreshClient()}
 function hdr(t,btn){return `<div class="top"><h2>${t}</h2>${btn||''}</div>`}
 function ago(ms){const m=Math.round((Date.now()-ms)/60000);return m<60?m+' min atrás':Math.round(m/60)+' h atrás'}
 function dash(){
