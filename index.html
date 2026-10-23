@@ -395,8 +395,8 @@ function setMail(cid){const t=mailTpl(cid,$('#em_tp').value);$('#em_su').value=t
 function mailCopyRich(){const el=$('#em_pv');if(!el)return false;let ok=false;try{const r=document.createRange();r.selectNodeContents(el);const g=getSelection();g.removeAllRanges();g.addRange(r);ok=document.execCommand('copy');g.removeAllRanges()}catch(e){}return ok}
 function mailTo(){return $('#em_to').value.split(/[,;\s]+/).map(x=>x.trim()).filter(Boolean)}
 function openMail(cid){const c=S.clients.find(x=>x.id==cid),L=mailTo();if(!L.length||L.some(x=>!x.includes('@')))return toast('Informe os e-mails corretamente, separados por vírgula');c.email=L.join(', ');save();
- const tp=$('#em_tp').value,ok=mailCopyRich(),mt='mailto:'+L.map(encodeURIComponent).join(',')+'?subject='+encodeURIComponent($('#em_su').value),u='https://mail.zoho.com/mail/compose.do?extsrc=mailto&mode=compose&tp=zb&ct='+encodeURIComponent(mt);
- logIt('preparou e-mail ('+tp+')',c.nome);window.open(u,'_blank');toast(ok?'Zoho Mail aberto. Cole o e-mail no corpo (Ctrl+V)':'Zoho Mail aberto. Use “Copiar e-mail formatado” e cole no corpo')}
+ const tp=$('#em_tp').value,ok=mailCopyRich();
+ logIt('preparou e-mail ('+tp+')',c.nome);window.open('https://mail.zoho.com/zm/#mail/folder/inbox','_blank');toast(ok?'E-mail copiado. No Zoho, clique em Novo e-mail e cole (Ctrl+V)':'Zoho aberto. Use “Copiar e-mail formatado” e cole no corpo')}
 async function copyMailRich(cid){if(mailCopyRich())return toast('E-mail formatado copiado. Cole no corpo do e-mail');try{const el=$('#em_pv'),h=el.innerHTML,p=mailPlain(cid,$('#em_tp').value,$('#em_bd').value);await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([h],{type:'text/html'}),'text/plain':new Blob([p],{type:'text/plain'})})]);toast('E-mail formatado copiado. Cole no corpo do e-mail')}catch(e){toast('Não consegui copiar. Selecione a pré-visualização e use Ctrl+C')}}
 
 const dbtn=(c,id)=>S.role==='admin'?`<button class="btn s r" onclick="event.stopPropagation();delR('${c}',${id})">Excluir</button>`:'';
