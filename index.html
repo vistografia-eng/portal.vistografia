@@ -670,7 +670,7 @@ function render(){autoInad();feedSync();const lp=document.getElementById('lp');i
  {const sc=($('#nav .ns')||{}).scrollTop||0;$('#nav').innerHTML=navHtml(m);$('#nav').classList.toggle('mini',NMINI&&innerWidth>760);const ns=$('#nav .ns');if(ns)ns.scrollTop=sc}
  if(!(view==='client'?myPerm().some(x=>x==='clients'||x==='brands'):myPerm().includes(view)))view='dash';
  const v={dash,crm,prop,contr,clients,brands,client,tasks,content,fin,team,req:reqs,meet:meets,proj,cal,rep,kb,notif,files,docs,staff,cfg,feed:feedView}[view];
- $('#main').innerHTML='<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px"><button id="nmenu" class="nmenu" type="button" aria-label="Abrir menu" onclick="navMobile()">'+ico('menu')+'</button><div style="position:relative;flex:1;min-width:0"><input id="gs" placeholder="Busca global: cliente, tarefa, conteúdo, projeto…" oninput="gsearch(this.value)"><div id="gsr" class="card" style="display:none;position:absolute;left:0;right:0;z-index:5;max-height:300px;overflow:auto"></div></div><button id="nbell" class="nbell" type="button" onclick="nToggle()"></button></div>'+v();kebabize($('#main'));nDraw();
+ $('#main').innerHTML='<div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:12px"><button id="nmenu" class="nmenu" type="button" aria-label="Abrir menu" onclick="navMobile()">'+ico('menu')+'</button><div style="position:relative;flex:1;min-width:0"><input id="gs" placeholder="Busca global: cliente, tarefa, conteúdo, projeto…" oninput="gsearch(this.value)"><div id="gsr" class="card" style="display:none;position:absolute;left:0;right:0;z-index:5;max-height:300px;overflow:auto"></div></div><button id="nbell" class="nbell" type="button" onclick="nToggle()"></button>'+vhBtn()+'</div>'+v();kebabize($('#main'));nDraw();
 }
 let RFB=0;
 async function refreshClient(){if(!REF||PREV||RFB||document.hidden||document.querySelector('dialog[open]'))return;RFB=1;try{const g=await REF.get();if(g.exists){const a=JSON.stringify(S);mergeRemote(JSON.parse(g.data().json));if(JSON.stringify(S)!==a)render()}}catch(e){}RFB=0}
@@ -1327,6 +1327,16 @@ function feedMv(id,d){const c=S.clients.find(x=>x.id==((S.feed||[]).find(y=>y.id
 /* Feed Preview na conta do cliente: mesma grade da agência, só leitura. Se o servidor não entregar S.feed ao cliente, usa os conteúdos concluídos dele. */
 const feedSrc=()=>S.feed||(S.role!=='admin'?(S.contents||[]).filter(x=>x.st==='Concluído'):[]);
 function feedView(){const c=S.clients.find(x=>x.id==PCID());return hdr('Feed Preview')+(c?`<p class="sub" style="margin:-4px 0 12px">Veja como o seu feed está ficando. Toque em uma publicação para ler a legenda.</p>`+feedTab(c):'<div class="empty">Nenhum cliente vinculado a esta conta. Fale com a agência.</div>')}
+
+/* ===== Olhinho: ocultar valores (R$) em todas as abas ===== */
+let VH=(()=>{try{return localStorage.getItem('vh')!=='0'}catch(e){return true}})();
+const VRX=/R\$\s*-?\d[\d.]*(?:,\d+)?/g,VM='R$ ••••••';
+const vhOn=()=>VH&&typeof S!=='undefined'&&!!S&&S.role==='admin';
+function vhSweep(root){if(!vhOn()||!root)return;try{if(root.nodeType===3){if(root.nodeValue.includes('R$'))root.nodeValue=root.nodeValue.replace(VRX,VM);return}if(root.nodeType!==1)return;const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),L=[];let n;while(n=w.nextNode())if(n.nodeValue.includes('R$'))L.push(n);L.forEach(x=>{x.nodeValue=x.nodeValue.replace(VRX,VM)})}catch(e){}}
+const VEYE='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',VEYEX='<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.6 5.1A10.7 10.7 0 0 1 12 5c6.4 0 10 7 10 7a17 17 0 0 1-3.2 4M6.5 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 0 0 4.2 4.2M3 3l18 18"/></svg>';
+function vhBtn(){if(S.role!=='admin')return '';const t=VH?'Mostrar valores':'Ocultar valores';return `<button id="veye" class="nbell" type="button" onclick="vhT()" aria-label="${t}" aria-pressed="${VH?'true':'false'}" title="${t}">${VH?VEYEX:VEYE}</button>`}
+function vhT(){VH=!VH;try{localStorage.setItem('vh',VH?'1':'0')}catch(e){}render()}
+new MutationObserver(ms=>{if(!vhOn())return;ms.forEach(m=>m.addedNodes.forEach(vhSweep))}).observe(document.body,{childList:true,subtree:true});
 
 boot();
 </script></body></html>
